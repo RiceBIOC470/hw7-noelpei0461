@@ -10,12 +10,67 @@
 % dX/dt = a*X*(1-X).  
 % Part 1. This equation has two fixed points at 0 and 1. Explain the
 % meaning of these two points.
+
+% The fix point at 0 means when the initial population is 0, the total
+% population will not change according to time. Because in this case, no
+% initial population is shown and thus it can not grow. So it is a fixed
+% point.
+
+% The time point at 1 means the population growth reaches its maximum capacity N. The
+% population is in a saturated stage and cannot grow any more. Thus the it
+% is another fixed point.
+
 % Part 2: Evaluate the stability of these fixed points. Does it depend on
 % the value of the parameter a? 
+
+a=2;
+dt=0.01;
+interval=[0 10/a];
+nstep=(interval(2)-interval(1))/dt;
+sollx(1)=0;
+for ii=2:nstep
+    sollx(ii)=sollx(ii-1)+(sollx(ii-1)*(1-sollx(ii-1)))*a*dt;
+end
+tt=linspace(interval(1),interval(2), nstep);
+plot(tt,sollx)
+
+a=5;
+dt=0.01;
+interval=[0 10/a];
+nstep=(interval(2)-interval(1))/dt;
+sollx(1)=0;
+for ii=2:nstep
+    sollx(ii)=sollx(ii-1)+(sollx(ii-1)*(1-sollx(ii-1)))*a*dt;
+end
+tt=linspace(interval(1),interval(2), nstep);
+plot(tt,sollx)
+
+a=10;
+dt=0.01;
+interval=[0 10/a];
+nstep=(interval(2)-interval(1))/dt;
+sollx(1)=0;
+for ii=2:nstep
+    sollx(ii)=sollx(ii-1)+(sollx(ii-1)*(1-sollx(ii-1)))*a*dt;
+end
+tt=linspace(interval(1),interval(2), nstep);
+plot(tt,sollx)
+
+% No, the stability of these fixed points are very good and independent
+% from a. These are the initial and final stage of the growth. So,
+% regardless of the given growth factor a, these fixed point will not
+% change. However, the slope of does depend on the a. The higher the a
+% value, the faster the population reaches final stage.
+
 % Part 3: Write a function that takes two inputs - the initial condition x0
 % and the a parameter and integrates the equation forward in time. Make
 % your code return two variables - the timecourse of X and the time
-% required for the population to reach 99% of its maximum value. 
+% required for the population to reach 99% of its maximum value.
+x0=0.5;
+a=2;
+gw(x0,a) % gw is the function I generated for this problem.
+
+
 % Part 4: Another possible model is to consider discrete generations
 % instead allowing the population to vary continuously. e.g. X(t+1) = a*
 % X(t)*(1-X(t)). Consider this model and vary the a parameter in the range 0
@@ -24,6 +79,13 @@
 % value Xf, plot the point in the plane (a,Xf) so that at the end you will
 % have produced a bifucation diagram showing all possible final values of
 % Xf at each value of a. Explain your results. 
+
+gw2; 
+% The plot shows that as the a increases, the final value Xf also
+% increases and is proportional to a. The result corresponds to the
+% expectation, where the final value is a/4, since the maximum value of
+% (1-x)*x is 0.25.
+
 
 % Problem 2. Genetic toggle switches. 
 % Consider a genetic system of two genes A and B in which each gene
@@ -42,9 +104,56 @@
 % Part 1. Write down a two equation model (one for each gene product) for
 % this system. Your model should have one free parameter corresponding to the
 % maximum rate of expression of the gene, call it V. 
-%
+% dX1/dt=(V+(V-k)X2^4)/(1 + X2^4)-X2;dX2/dt=(V+(V-k)X1^4)/(1 + X1^4)-X1;
+
+
+
 % Part 2. Write code to integrate your model in time and plot the results for V = 5 for two cases, 
 % one in which A0 > B0 and one in which B0 > A0. 
-%
+% A0>B0
+k=1; 
+V=5; 
+A0=10; 
+B0=2;
+dxA=@(t,B) (V+(V-k).*B^4)/(1 + B^4)-B;
+dxB=@(t,A) (V+(V-k).*A^4)/(1 + A^4)-A;
+solA1=ode23(dxA, [0 10], B0);
+solB1=ode23(dxB, [0 10], A0);
+figure; hold on;
+plot(solA1.x,solA1.y,'r-'); 
+hold on;
+plot(solB1.x,solB1.y,'g-');
+hold off;
+xlabel('time'); ylabel('expression');
+legend('A', 'B');
+% A0<B0
+k=1; 
+V=5; 
+A0=2; 
+B0=10;
+dxA=@(t,B) (V+(V-k).*B^4)/(1 + B^4)-B;
+dxB=@(t,A) (V+(V-k).*A^4)/(1 + A^4)-A;
+solA1=ode23(dxA, [0 10], B0);
+solB1=ode23(dxB, [0 10], A0);
+figure; hold on;
+plot(solA1.x,solA1.y,'r-'); 
+hold on;
+plot(solB1.x,solB1.y,'g-'); 
+hold off;
+xlabel('time'); ylabel('expression');
+legend('A', 'B');
 % Part 3. By any means you want, write code to produce a bifurcation diagram showing all
-% fixed points of the system as a function of the V parameter. 
+% fixed points of the system as a function of the V parameter.
+
+% dA/dt = 0 = -B^5+(V-k)*B^4+0*B^3+0*B^2-B+V
+figure(1); 
+hold on;
+k=2; 
+for V=0:0.05:5
+    polycoeff=[-1 (V-k) 0 0 -1 V]
+    rts=roots(polycoeff);
+    rts=rts(imag(rts)==0);
+    plot(V*ones(length(rts),1),rts,'r.');
+end
+hold off;
+xlabel('V value'); ylabel('fixed points');
