@@ -1,4 +1,14 @@
 %HW7
+%GB comments
+1a 100
+1b 100
+1c 100
+1d 50 The wrong plot is generated and the comments do not explain the behavior accurately.  Your function should have returned a bifurcation diagram that illustrates the emergence of new fixed points as a function of ‘a.’
+2a. 50 wrong equations used. It should be [V/(1+x(2)^4)-x(1); V/(1+x(1)^4)-x(2)];
+2b. 100 correctly generated plots, but the equations used are wrong. I will give full credit
+2c  100 same as 2b. 
+overall: 86
+
 
 % Problem 1: Modeling population growth
 % The simplest model for a growing population assumes that each current
